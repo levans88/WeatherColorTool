@@ -1,0 +1,20 @@
+program WeatherColorTool;
+
+{$APPTYPE CONSOLE}
+
+{$R *.res}
+
+uses
+  System.SysUtils,
+  xEditAPI in '..\GreatScriptApp\xEditAPI.pas',
+  GreatScript in '..\GreatScriptApp\GreatScript.pas',
+  WeatherEditorLE in 'F:\Storage\Games\PC\Fallout 4\Tools\FO4Edit\Edit Scripts\WeatherEditorLE.pas';
+
+begin
+  try
+    { TODO -oUser -cConsole Main : Insert code here }
+  except
+    on E: Exception do
+      Writeln(E.ClassName, ': ', E.Message);
+  end;
+end.

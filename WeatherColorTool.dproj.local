@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2019/12/21 14:42:05.000.985,C:\Users\user\Documents\Embarcadero\Studio\Projects\GreatScriptApp.dproj=C:\Users\user\Documents\Embarcadero\Studio\Projects\Project1.dproj</Transaction>
+    <Transaction>2019/12/21 14:45:07.000.335,=G:\Storage\Games\PC\Skyrim\2018\0 - Main\Utilities\TES5Edit\Edit Scripts\xEditAPI.pas</Transaction>
+    <Transaction>2019/12/21 14:45:23.000.657,G:\Storage\Games\PC\Skyrim\2018\0 - Main\Utilities\TES5Edit\Edit Scripts\xEditAPI.pas=</Transaction>
+    <Transaction>2019/12/21 14:46:41.000.223,C:\Users\user\Documents\Embarcadero\Studio\Projects\GreatScriptApp\GreatScriptApp.dproj=C:\Users\user\Documents\Embarcadero\Studio\Projects\GreatScriptApp.dproj</Transaction>
+    <Transaction>2019/12/21 14:47:21.000.318,=C:\Users\user\Documents\Embarcadero\Studio\Projects\GreatScriptApp\xEditAPI.pas</Transaction>
+    <Transaction>2019/12/21 14:48:30.000.245,=C:\Users\user\Documents\Embarcadero\Studio\Projects\GreatScriptApp\Unit1.pas</Transaction>
+    <Transaction>2019/12/21 14:48:41.000.452,C:\Users\user\Documents\Embarcadero\Studio\Projects\GreatScriptApp\Unit1.pas=C:\Users\user\Documents\Embarcadero\Studio\Projects\GreatScriptApp\GreatScript.pas</Transaction>
+    <Transaction>2019/12/22 07:14:22.000.108,=F:\Storage\Games\PC\Fallout 4\Tools\FO4Edit\Edit Scripts\WeatherEditorLE.pas</Transaction>
+    <Transaction>2019/12/22 09:41:17.000.676,C:\Users\user\Documents\Embarcadero\Studio\Projects\GreatScriptApp\GreatScriptApp.dproj=C:\Users\user\Documents\Embarcadero\Studio\Projects\WeatherColorTool\WeatherColorTool.dproj</Transaction>
+  </Transactions>
+</BorlandProject>
