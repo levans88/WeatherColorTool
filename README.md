@@ -11,35 +11,12 @@ The plan is to use the existing "Weather Editor.pas" script in xEdit (Ctrl + W) 
 
 The three groups of colors that need to be updated, their screenshot dimensions, and their fields as named in "Weather Editor.pas" are listed below:
 
-1) Clouds:
-1360 x 50
-"Layer 0" through "Layer 28"
-Some layers are enabled (checked) but many might not be
+1) Clouds, 1360 x 50, "Layer 0" through "Layer 28", Some layers are enabled (checked) but many might not be
 
-2) Weather Colors:
-1360 x 950
+2) Weather Colors, 1360 x 950
 
-> Sunrise, Day, Sunset, Night, Unknown, Unknown, Unknown, Unknown
-v
-Sky-Upper
-Fog Near
-Unknown
-Ambient
-Sunlight
-Sun
-Stars
-Sky-Lower
-Horizon
-Effect Lighting
-Cloud LOD Diffuse
-Cloud LOD Ambient
-Fog Far
-Sky Statics
-Water Multiplier
-Sun Glare
-Moon Glare
-Unknown1
-Unknown2
+X-Axis: Sunrise, Day, Sunset, Night, Unknown, Unknown, Unknown, Unknown
 
-3) Directional Ambient Lighting Colors
-1360 x 300
+Y-Axis: Sky-Upper, Fog Near, Unknown, Ambient, Sunlight, Sun, Stars, Sky-Lower, Horizon, Effect Lighting, Cloud LOD Diffuse, Cloud LOD Ambient, Fog Far, Sky Statics, Water Multiplier, Sun Glare, Moon Glare, Unknown1, Unknown2
+
+3) Directional Ambient Lighting Colors, 1360 x 300
