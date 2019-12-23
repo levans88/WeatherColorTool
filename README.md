@@ -18,3 +18,5 @@ The three groups of colors, their screenshot dimensions, and their fields as nam
 - Y-Axis: Sky-Upper, Fog Near, Unknown, Ambient, Sunlight, Sun, Stars, Sky-Lower, Horizon, Effect Lighting, Cloud LOD Diffuse, Cloud LOD Ambient, Fog Far, Sky Statics, Water Multiplier, Sun Glare, Moon Glare, Unknown1, Unknown2
 
 3) Directional Ambient Lighting Colors, 1360 x 300
+- X-Axis: Sunrise, Day, Sunset, Night, Unknown, Unknown, Unknown, Unknown
+- Y-Axis: Color #0 (X+), Color #1 (X-), Color #2 (Y+), Color #3 (Y-), Color #4 (Z+), Color #5 (Z-)
