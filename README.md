@@ -9,9 +9,9 @@ I want to change the collective hue of the colors involved in a rad storm in Pai
 
 The plan is to use the existing "Weather Editor.pas" script in xEdit (Ctrl + W) or its code to export screenshots of the colors for a specific weather, edit the image colors in whatever way, then use a modified version of the same weather script to load the new colors from a file (ex: image, array in text file, etc.)
 
-The three groups of colors that need to be updated, their screenshot dimensions, and their fields as named in "Weather Editor.pas" are listed below:
+The three groups of colors, their screenshot dimensions, and their fields as named in "Weather Editor.pas" are listed below:
 
-1) Clouds, 1360 x 50, "Layer 0" through "Layer 28", Some layers are enabled (checked) but many might not be
+1) Clouds, 1360 x 50, "Layer 0" through "Layer 28". Some layers are enabled (checked) but many might not be. <b>Rad storm cloud layers appear to be all the same color. This experiment does not need to handle cloud layers at this time</b>.
 
 2) Weather Colors, 1360 x 950
 - X-Axis: Sunrise, Day, Sunset, Night, Unknown, Unknown, Unknown, Unknown
