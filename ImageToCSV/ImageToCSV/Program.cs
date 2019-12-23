@@ -12,16 +12,15 @@ namespace ImageToCSV
     {
         static void Main(string[] args)
         {
+            int writeCount = 0;
             string[] filePaths = Directory.GetFiles(@".\", "*.png");
 
             if (filePaths.Length == 0)
             {
-                System.Console.WriteLine("No PNG files found. Place PNG files for conversion in application folder and try again.");
+                Console.WriteLine("No PNG files found. Place PNG files for conversion in the same folder as this application and try again.");
             }
             else
             {
-                //Console.WriteLine(filePaths.Length.ToString());
-
                 foreach(var fileName in filePaths)
                 {
                     string csv = "";
@@ -30,17 +29,17 @@ namespace ImageToCSV
                     GraphicsUnit units = GraphicsUnit.Pixel;
                     RectangleF rect = bmp.GetBounds(ref units);
 
-                    var xColorCount = (int)Math.Floor(rect.Width / 50);
-                    var yColorCount = (int)Math.Floor(rect.Height / 170);
+                    var xColorCount = (int)Math.Floor(rect.Width / 170);
+                    var yColorCount = (int)Math.Floor(rect.Height / 50);
 
                     // For each row...
                     for (var yColor = 0; yColor < yColorCount; yColor++)
                     {
                         // For each column...
-                        for (var xColor = 0; xColor < xColorCount;  xColor++)
+                        for (var xColor = 0; xColor < xColorCount; xColor++)
                         {
                             // Each color is 50 x 170
-                            Color color = bmp.GetPixel(xColor * 50, yColor * 170);
+                            Color color = bmp.GetPixel(xColor * 171, yColor * 51);
                             int red = color.R;
                             int green = color.G;
                             int blue = color.B;
@@ -54,7 +53,16 @@ namespace ImageToCSV
                     csv = csv.TrimEnd(',');
 
                     // Write to CSV file
-                    File.AppendAllText(fileName.Split('\\')[1].Split('.')[0] + ".csv", csv);
+                    File.WriteAllText(fileName.Split('\\')[1].Split('.')[0] + ".csv", csv);
+                    writeCount += 1;
+                }
+
+                if (writeCount > 0) {
+                    Console.WriteLine("Converted " + writeCount + " PNGs to CSV.");
+                }
+                else
+                {
+                    Console.WriteLine("Something went wrong.");
                 }
             }
         }

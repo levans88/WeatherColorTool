@@ -142,54 +142,6 @@ begin
     TPanel(lstCED[i]).Color := ColorElementToColor(ObjectToElement(lstCEDElement[i]));
 end;
 
-// LE
-//============================================================================
-// load colors from CSV into color editors with index idxFrom..idxTo
-procedure ColorEditorReadColorFromCSV(idxFrom, idxTo: integer);
-var
-  i: integer;
-begin
-  for i := idxFrom to idxTo do
-
-    TPanel(lstCED[i]).Color := ColorElementToColor(ObjectToElement(lstCEDElement[i]));
-end;
-
-// LE
-//============================================================================
-// load CSV for weather colors
-procedure btnLoadWeatherColorsClick(Sender: TObject);
-  var
-    selectedFile: string;
-    csvContents : string;
-    dlg: TOpenDialog;
-
-begin
-  if not CheckEditable(Weather) then
-    Exit;
-
-  // Load file
-  selectedFile := '';
-  dlg := TOpenDialog.Create(nil);
-  try
-    dlg.InitialDir := 'C:\';
-    dlg.Filter := 'CSV|*.csv';
-
-    if dlg.Execute then
-      selectedFile := dlg.FileName;
-  finally
-    dlg.Free;
-  end;
-
-  if selectedFile <> '' then
-    // Read in file
-    while not eof(selectedFile) do begin
-      Readln(selectedFile, csvContents);
-    end;
-      CloseFile(selectedFile);
-    //ColorEditorReadColor(0, Pred(CountTimes));
-
-end;
-
 //============================================================================
 // save colors to weather record for color editors with index idxFrom..idxTo
 procedure ColorEditorWriteColor(idxFrom, idxTo: integer);
@@ -244,6 +196,38 @@ begin
     Exit;
 
   ColorEditorWriteColor(CountTimes, CountTimes + Pred(CountWeatherColors));
+end;
+
+// LE
+//============================================================================
+// load settings for weather colors
+procedure btnLoadWeatherColorsClick(Sender: TObject);
+  var
+    selectedFile: string;
+    dlg: TOpenDialog;
+
+begin
+  if not CheckEditable(Weather) then
+    Exit;
+
+  // Load file
+  selectedFile := '';
+  dlg := TOpenDialog.Create(nil);
+  try
+    dlg.InitialDir := 'C:\';
+    dlg.Filter := 'CSV|*.csv';
+    //dlg.Filter := 'All files (*.*)|*.*';
+
+    if dlg.Execute then
+      selectedFile := dlg.FileName;
+  finally
+    dlg.Free;
+  end;
+
+  if selectedFile <> '' then
+    // Read in weather colors
+
+
 end;
 
 //============================================================================

@@ -37,7 +37,7 @@ var
   btnShowCloudTexture, btnApplyCloud, btnApplyWeatherColors, btnApplyLightingColors: TButton;
 
   //LE
-  btnLoadWeatherColors, btnLoadLightingColors: TButton;
+  btnLoadCloudLayerColors, btnLoadWeatherColors, btnLoadLightingColors: TButton;
 
   btnCopyClouds, btnCopyWeatherColors, btnCopyLightingColors: TButton;
   edCloudXSpeed, edCloudYSpeed, edCloudAlpha1, edCloudAlpha2, edCloudAlpha3, edCloudAlpha4, edCloudAlpha5, edCloudAlpha6, edCloudAlpha7, edCloudAlpha8: TLabeledEdit;
@@ -142,54 +142,6 @@ begin
     TPanel(lstCED[i]).Color := ColorElementToColor(ObjectToElement(lstCEDElement[i]));
 end;
 
-// LE
-//============================================================================
-// load colors from CSV into color editors with index idxFrom..idxTo
-procedure ColorEditorReadColorFromCSV(idxFrom, idxTo: integer);
-var
-  i: integer;
-begin
-  for i := idxFrom to idxTo do
-
-    TPanel(lstCED[i]).Color := ColorElementToColor(ObjectToElement(lstCEDElement[i]));
-end;
-
-// LE
-//============================================================================
-// load CSV for weather colors
-procedure btnLoadWeatherColorsClick(Sender: TObject);
-  var
-    selectedFile: string;
-    csvContents : string;
-    dlg: TOpenDialog;
-
-begin
-  if not CheckEditable(Weather) then
-    Exit;
-
-  // Load file
-  selectedFile := '';
-  dlg := TOpenDialog.Create(nil);
-  try
-    dlg.InitialDir := 'C:\';
-    dlg.Filter := 'CSV|*.csv';
-
-    if dlg.Execute then
-      selectedFile := dlg.FileName;
-  finally
-    dlg.Free;
-  end;
-
-  if selectedFile <> '' then
-    // Read in file
-    while not eof(selectedFile) do begin
-      Readln(selectedFile, csvContents);
-    end;
-      CloseFile(selectedFile);
-    //ColorEditorReadColor(0, Pred(CountTimes));
-
-end;
-
 //============================================================================
 // save colors to weather record for color editors with index idxFrom..idxTo
 procedure ColorEditorWriteColor(idxFrom, idxTo: integer);
@@ -244,6 +196,18 @@ begin
     Exit;
 
   ColorEditorWriteColor(CountTimes, CountTimes + Pred(CountWeatherColors));
+end;
+
+// LE
+//============================================================================
+// load settings for weather colors
+procedure btnLoadWeatherColorsClick(Sender: TObject);
+begin
+  if not CheckEditable(Weather) then
+    Exit;
+
+  // Read in weather colors...
+
 end;
 
 //============================================================================
@@ -313,6 +277,20 @@ begin
     SetEditValue(ElementByIndex(ElementByPath(Weather, 'DATA'), Layer + 1), edCloudXSpeed.Text);
 
   ColorEditorWriteColor(0, Pred(CountTimes));
+end;
+
+// LE
+//============================================================================
+// load colors for a cloud layer
+procedure btnLoadCloudLayerColorsClick(Sender: TObject);
+var
+  Layer, i: integer;
+begin
+  if not CheckEditable(Weather) then
+    Exit;
+
+    // Read in cloud layer colors...
+
 end;
 
 //============================================================================

@@ -160,7 +160,6 @@ end;
 procedure btnLoadWeatherColorsClick(Sender: TObject);
   var
     selectedFile: string;
-    csvContents : string;
     dlg: TOpenDialog;
 
 begin
@@ -182,10 +181,8 @@ begin
 
   if selectedFile <> '' then
     // Read in file
-    while not eof(selectedFile) do begin
-      Readln(selectedFile, csvContents);
-    end;
-      CloseFile(selectedFile);
+
+
     //ColorEditorReadColor(0, Pred(CountTimes));
 
 end;
