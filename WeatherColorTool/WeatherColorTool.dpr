@@ -1,4 +1,4 @@
-program WeatherColorTool;
+program WeatherColorToolApp;
 
 {$APPTYPE CONSOLE}
 

@@ -40,9 +40,9 @@ namespace ImageToCSV
                         {
                             // Each color is 50 x 170
                             Color color = bmp.GetPixel(xColor * 171, yColor * 51);
-                            int red = color.R;
-                            int green = color.G;
                             int blue = color.B;
+                            int green = color.G;
+                            int red = color.R;
 
                             // Append to CSV
                             csv += red.ToString() + "," + green.ToString() + "," + blue.ToString() + ",";

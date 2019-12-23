@@ -36,8 +36,8 @@ var
   cmbCloudTexture: TComboBox;
   btnShowCloudTexture, btnApplyCloud, btnApplyWeatherColors, btnApplyLightingColors: TButton;
 
-  //LE
-  btnLoadWeatherColors, btnLoadLightingColors: TButton;
+  // LE
+  btnLoadWeatherColors: TButton;
 
   btnCopyClouds, btnCopyWeatherColors, btnCopyLightingColors: TButton;
   edCloudXSpeed, edCloudYSpeed, edCloudAlpha1, edCloudAlpha2, edCloudAlpha3, edCloudAlpha4, edCloudAlpha5, edCloudAlpha6, edCloudAlpha7, edCloudAlpha8: TLabeledEdit;
@@ -144,22 +144,32 @@ end;
 
 // LE
 //============================================================================
-// load colors from CSV into color editors with index idxFrom..idxTo
-procedure ColorEditorReadColorFromCSV(idxFrom, idxTo: integer);
+// load colors from CSV into color editors
+procedure ColorEditorReadColorFromCSVContents(csvContents: string);
 var
   i: integer;
+  c: integer;
+  clr: TColor;
 begin
-  for i := idxFrom to idxTo do
+  i := 0;
+  for c := 0 to 455 do
+    clr := c shl 16;
+    Inc(c, 1);
+    clr := c shl 8;
+    Inc(c, 1);
+    clr := c;
+    Inc(c, 1);
 
-    TPanel(lstCED[i]).Color := ColorElementToColor(ObjectToElement(lstCEDElement[i]));
+    TPanel(lstCED[i]).Color := clr;
+    Inc(i, 1);
 end;
 
 // LE
 //============================================================================
-// load CSV for weather colors
+// read CSV for weather colors
 procedure btnLoadWeatherColorsClick(Sender: TObject);
   var
-    selectedFile: string;
+    selectedFile: TextFile;
     csvContents : string;
     dlg: TOpenDialog;
 
@@ -168,26 +178,26 @@ begin
     Exit;
 
   // Load file
-  selectedFile := '';
+  //selectedFile := '';
   dlg := TOpenDialog.Create(nil);
   try
     dlg.InitialDir := 'C:\';
     dlg.Filter := 'CSV|*.csv';
 
     if dlg.Execute then
-      selectedFile := dlg.FileName;
+      AssignFile(selectedFile, dlg.FileName);
+      //Reset(selectedFile);
+
+      // Read in file
+      while not Eof(selectedFile) do begin
+        Readln(selectedFile, csvContents);
+      end;
+
+      CloseFile(selectedFile);
+      ColorEditorReadColorFromCSVContents(csvContents);
   finally
     dlg.Free;
   end;
-
-  if selectedFile <> '' then
-    // Read in file
-    while not eof(selectedFile) do begin
-      Readln(selectedFile, csvContents);
-    end;
-      CloseFile(selectedFile);
-    //ColorEditorReadColor(0, Pred(CountTimes));
-
 end;
 
 //============================================================================
@@ -254,17 +264,6 @@ begin
     Exit;
 
   ColorEditorWriteColor(CountTimes + CountWeatherColors, CountTimes + CountWeatherColors + Pred(CountLightingColors));
-end;
-
-// LE
-//============================================================================
-// load settings for lighting colors
-procedure btnLoadLightingColorsClick(Sender: TObject);
-begin
-  if not CheckEditable(Weather) then
-    Exit;
-
-  // Read in lighting colors...
 end;
 
 //============================================================================
@@ -711,6 +710,15 @@ begin
         Inc(CountWeatherColors);
       end;
     end;
+
+    // LE
+    btnLoadWeatherColors := TButton.Create(frm);
+    btnLoadWeatherColors.Parent := sbx;
+    btnLoadWeatherColors.Width := 100;
+    btnLoadWeatherColors.Left := 240 + CountTimes*iColorEditorWidth - btnLoadWeatherColors.Width;
+    btnLoadWeatherColors.Top := 40 + Succ(i)*iColorEditorHeight;
+    btnLoadWeatherColors.Caption := 'Load CSV';
+    btnLoadWeatherColors.OnClick := btnLoadWeatherColorsClick;
 
     btnApplyWeatherColors := TButton.Create(frm);
     btnApplyWeatherColors.Parent := sbx;
