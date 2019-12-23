@@ -1,0 +1,6 @@
+C:\Repos\ImageToCSV\ImageToCSV\bin\Debug\ImageToCSV.exe
+C:\Repos\ImageToCSV\ImageToCSV\bin\Debug\ImageToCSV.pdb
+C:\Repos\ImageToCSV\ImageToCSV\obj\Debug\ImageToCSV.csprojAssemblyReference.cache
+C:\Repos\ImageToCSV\ImageToCSV\obj\Debug\ImageToCSV.csproj.CoreCompileInputs.cache
+C:\Repos\ImageToCSV\ImageToCSV\obj\Debug\ImageToCSV.exe
+C:\Repos\ImageToCSV\ImageToCSV\obj\Debug\ImageToCSV.pdb
