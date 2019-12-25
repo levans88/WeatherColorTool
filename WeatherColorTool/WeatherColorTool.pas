@@ -15,6 +15,9 @@ const
   iColorEditorWidth = 170;
   iColorEditorHeight = 50;
 
+  // LE
+  //sDelimiterChar = ';';
+
   // LE overrides to get RAD studio to shutup
   wbGameMode = 'gmFO4';
   gmTES4 = 'gmTES4';
@@ -38,6 +41,7 @@ var
 
   // LE
   btnLoadWeatherColors: TButton;
+  //runCount: integer;
 
   btnCopyClouds, btnCopyWeatherColors, btnCopyLightingColors: TButton;
   edCloudXSpeed, edCloudYSpeed, edCloudAlpha1, edCloudAlpha2, edCloudAlpha3, edCloudAlpha4, edCloudAlpha5, edCloudAlpha6, edCloudAlpha7, edCloudAlpha8: TLabeledEdit;
@@ -123,13 +127,49 @@ begin
   end;
 end;
 
+// LE
+//============================================================================
+//
+function StupidTest(): integer;
+var
+  stupidNumber: integer;
+begin
+  stupidNumber := stupidNumber or 5;
+  stupidNumber := stupidNumber or 10;
+
+  MessageDlg(Format('stupidTestString is  %s', [IntToStr(stupidNumber)]), mtInformation, [mbOk], 0);
+end;
+
 //============================================================================
 // convert a color element in plugin to TColor
 function ColorElementToColor(elColor: IInterface): LongWord;
+  var
+    sResult: string;
+    testBlue: integer;
+    //sRunCount: string;
 begin
   Result := Result or GetElementNativeValues(elColor, 'Blue') shl 16;
+  //MessageDlg(Format('sRunCount is  %s', [sRunCount]), mtInformation, [mbOk], 0);
+  //Result := GetElementNativeValues(elColor, 'Blue') shl 16;
+  //sResult := IntToStr(Result);
+  //testBlue := GetElementNativeValues(elColor, 'Blue');
+  //MessageDlg(Format('testBlue is  %s', [IntToStr(testBlue)]), mtInformation, [mbOk], 0);
+
   Result := Result or GetElementNativeValues(elColor, 'Green') shl 8;
+  //Result := GetElementNativeValues(elColor, 'Green') shl 8;
+  //sResult := IntToStr(Result);
+  //MessageDlg(Format('sResult2 is  %s', [sResult]), mtInformation, [mbOk], 0);
+
   Result := Result or GetElementNativeValues(elColor, 'Red');
+  //Result := GetElementNativeValues(elColor, 'Red');
+  //sResult := IntToStr(Result);
+  //MessageDlg(Format('sResult3 is  %s', [sResult]), mtInformation, [mbOk], 0);
+
+  //sRunCount := IntToStr(runCount);
+  //MessageDlg(Format('sRunCount is  %s', [sRunCount]), mtInformation, [mbOk], 0);
+
+  //runCount := runCount + 1;
+  //StupidTest();
 end;
 
 //============================================================================
@@ -144,24 +184,38 @@ end;
 
 // LE
 //============================================================================
-// load colors from CSV into color editors
-procedure ColorEditorReadColorFromCSVContents(csvContents: string);
+// save colors to weather record for color editors with index idxFrom..idxTo
+procedure ColorEditorWriteColorLE(idxFrom, idxTo: integer; sl: TStringList);
 var
-  i: integer;
-  c: integer;
-  clr: TColor;
+  i,a: integer;
+  c: LongWord;
+  e: IInterface;
 begin
-  i := 0;
-  for c := 0 to 455 do
-    clr := c shl 16;
-    Inc(c, 1);
-    clr := c shl 8;
-    Inc(c, 1);
-    clr := c;
-    Inc(c, 1);
+  a := 0;
 
-    TPanel(lstCED[i]).Color := clr;
-    Inc(i, 1);
+  //MessageDlg(Format('sanity %s', ['test']), mtInformation, [mbOk], 0);
+  //MessageDlg(Format('sl count is %s', [IntToStr(sl.Count)]), mtInformation, [mbOk], 0);
+
+  //MessageDlg(Format('sl1 is %s', [IntToStr(sl[a])]), mtInformation, [mbOk], 0);
+  //MessageDlg(Format('sl2 is %s', [IntToStr(sl[a + 1])]), mtInformation, [mbOk], 0);
+  //MessageDlg(Format('sl3 is %s', [IntToStr(sl[a + 2])]), mtInformation, [mbOk], 0);
+
+  for i := idxFrom to idxTo do begin
+    e := ObjectToElement(lstCEDElement[i]);
+
+    c := 0;
+    c := c or sl[a] shl 16;
+    c := c or sl[a + 1] shl 8;
+    c := c or sl[a + 2];
+
+    SetElementNativeValues(e, 'Blue', (c shr 16) and $FF);
+    SetElementNativeValues(e, 'Green', (c shr 8) and $FF);
+    SetElementNativeValues(e, 'Red', c and $FF);
+
+    a := a + 3;
+  end;
+
+  //sl.Free;
 end;
 
 // LE
@@ -169,34 +223,60 @@ end;
 // read CSV for weather colors
 procedure btnLoadWeatherColorsClick(Sender: TObject);
   var
-    selectedFile: TextFile;
-    csvContents : string;
     dlg: TOpenDialog;
-
+    slColors, sl: TStringList;
+    fname, line: string;
+    i, l: integer;
+    //c: LongWord;
+    e: IInterface;
 begin
   if not CheckEditable(Weather) then
     Exit;
 
   // Load file
-  //selectedFile := '';
   dlg := TOpenDialog.Create(nil);
   try
-    dlg.InitialDir := 'C:\';
-    dlg.Filter := 'CSV|*.csv';
+    dlg.Filter := 'CSV files (*.csv)|*.csv';
+    dlg.InitialDir := ';';//wbScriptsPath;
+    dlg.FileName := EditorID(e) + '.csv';
 
     if dlg.Execute then
-      AssignFile(selectedFile, dlg.FileName);
-      //Reset(selectedFile);
+      fname := dlg.FileName;
 
-      // Read in file
-      while not Eof(selectedFile) do begin
-        Readln(selectedFile, csvContents);
+      //MessageDlg(Format('fname is %s', [fname]), mtInformation, [mbOk], 0);
+
+      // slColors contains the CSV file contents
+      slColors := TStringList.Create;
+      slColors.LoadFromFile(fname);
+
+      // sl contains the delimitted strings (fields)
+      sl := TStringList.Create;
+      sl.Delimiter := ',';
+      sl.StrictDelimiter := True;
+
+      // Iterate over lines
+      for l := 0 to Pred(slColors.Count) do begin
+        line := slColors[l];
+
+        sl.DelimitedText := line;
+        //MessageDlg(Format('sl count is %s', [IntToStr(sl.Count)]), mtInformation, [mbOk], 0);
+
+        // Iterate over delimitted strings (fields)
+        //for i := 0 to Pred(sl.Count) do begin
+
+        //end;
+
       end;
 
-      CloseFile(selectedFile);
-      ColorEditorReadColorFromCSVContents(csvContents);
+      ColorEditorWriteColorLE(CountTimes, CountTimes + Pred(CountWeatherColors), sl);
+
+
+    //else
+      //Exit;
   finally
     dlg.Free;
+    sl.Free;
+    slColors.Free;
   end;
 end;
 
@@ -519,6 +599,7 @@ begin
   Result.BevelOuter := bvNone;
   Result.Cursor := -21; //crHandPoint;
   // list of color elements in plugin
+
   lstCEDElement.Add(elColor);
   Result.Tag := Pred(lstCEDElement.Count);
   Result.ParentBackground := False;
@@ -718,7 +799,7 @@ begin
     btnLoadWeatherColors.Left := 240 + CountTimes*iColorEditorWidth - btnLoadWeatherColors.Width;
     btnLoadWeatherColors.Top := 40 + Succ(i)*iColorEditorHeight;
     btnLoadWeatherColors.Caption := 'Load CSV';
-    btnLoadWeatherColors.OnClick := btnLoadWeatherColorsClick;
+    //btnLoadWeatherColors.OnClick := btnLoadWeatherColorsClick;
 
     btnApplyWeatherColors := TButton.Create(frm);
     btnApplyWeatherColors.Parent := sbx;
@@ -857,6 +938,7 @@ end;
 //============================================================================
 function Initialize: integer;
 begin
+  //runCount := 0;
   // game specific settings
   if (wbGameMode = gmTES5) or (wbGameMode = gmFO4) then begin
     sCloudLayerSignatures := '00TX,10TX,20TX,30TX,40TX,50TX,60TX,70TX,80TX,90TX,:0TX,;0TX,<0TX,=0TX,>0TX,?0TX,@0TX,A0TX,B0TX,C0TX,D0TX,E0TX,F0TX,G0TX,H0TX,I0TX,J0TX,K0TX,L0TX';
