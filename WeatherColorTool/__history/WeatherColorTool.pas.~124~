@@ -16,7 +16,7 @@ const
   iColorEditorHeight = 50;
 
   // LE
-  sDelimiterChar = ';';
+  //sDelimiterChar = ';';
 
   // LE overrides to get RAD studio to shutup
   wbGameMode = 'gmFO4';
@@ -40,8 +40,7 @@ var
   btnShowCloudTexture, btnApplyCloud, btnApplyWeatherColors, btnApplyLightingColors: TButton;
 
   // LE
-  btnLoadWeatherColors: TButton;
-  //runCount: integer;
+  btnLoadWeatherColors, btnLoadAmbientLightingColors: TButton;
 
   btnCopyClouds, btnCopyWeatherColors, btnCopyLightingColors: TButton;
   edCloudXSpeed, edCloudYSpeed, edCloudAlpha1, edCloudAlpha2, edCloudAlpha3, edCloudAlpha4, edCloudAlpha5, edCloudAlpha6, edCloudAlpha7, edCloudAlpha8: TLabeledEdit;
@@ -146,30 +145,10 @@ function ColorElementToColor(elColor: IInterface): LongWord;
   var
     sResult: string;
     testBlue: integer;
-    //sRunCount: string;
 begin
   Result := Result or GetElementNativeValues(elColor, 'Blue') shl 16;
-  //MessageDlg(Format('sRunCount is  %s', [sRunCount]), mtInformation, [mbOk], 0);
-  //Result := GetElementNativeValues(elColor, 'Blue') shl 16;
-  //sResult := IntToStr(Result);
-  //testBlue := GetElementNativeValues(elColor, 'Blue');
-  //MessageDlg(Format('testBlue is  %s', [IntToStr(testBlue)]), mtInformation, [mbOk], 0);
-
   Result := Result or GetElementNativeValues(elColor, 'Green') shl 8;
-  //Result := GetElementNativeValues(elColor, 'Green') shl 8;
-  //sResult := IntToStr(Result);
-  //MessageDlg(Format('sResult2 is  %s', [sResult]), mtInformation, [mbOk], 0);
-
   Result := Result or GetElementNativeValues(elColor, 'Red');
-  //Result := GetElementNativeValues(elColor, 'Red');
-  //sResult := IntToStr(Result);
-  //MessageDlg(Format('sResult3 is  %s', [sResult]), mtInformation, [mbOk], 0);
-
-  //sRunCount := IntToStr(runCount);
-  //MessageDlg(Format('sRunCount is  %s', [sRunCount]), mtInformation, [mbOk], 0);
-
-  //runCount := runCount + 1;
-  //StupidTest();
 end;
 
 //============================================================================
@@ -194,11 +173,11 @@ begin
   a := 0;
 
   //MessageDlg(Format('sanity %s', ['test']), mtInformation, [mbOk], 0);
-  MessageDlg(Format('sl count is %s', [IntToStr(sl.Count)]), mtInformation, [mbOk], 0);
+  //MessageDlg(Format('sl count is %s', [IntToStr(sl.Count)]), mtInformation, [mbOk], 0);
 
-  MessageDlg(Format('sl1 is %s', [IntToStr(sl[a])]), mtInformation, [mbOk], 0);
-  MessageDlg(Format('sl2 is %s', [IntToStr(sl[a + 1])]), mtInformation, [mbOk], 0);
-  MessageDlg(Format('sl3 is %s', [IntToStr(sl[a + 2])]), mtInformation, [mbOk], 0);
+  //MessageDlg(Format('sl1 is %s', [IntToStr(sl[a])]), mtInformation, [mbOk], 0);
+  //MessageDlg(Format('sl2 is %s', [IntToStr(sl[a + 1])]), mtInformation, [mbOk], 0);
+  //MessageDlg(Format('sl3 is %s', [IntToStr(sl[a + 2])]), mtInformation, [mbOk], 0);
 
   for i := idxFrom to idxTo do begin
     e := ObjectToElement(lstCEDElement[i]);
@@ -212,10 +191,10 @@ begin
     SetElementNativeValues(e, 'Green', (c shr 8) and $FF);
     SetElementNativeValues(e, 'Red', c and $FF);
 
-    a = a + 3;
+    a := a + 3;
   end;
 
-  sl.Free;
+  //sl.Free;
 end;
 
 // LE
@@ -224,10 +203,9 @@ end;
 procedure btnLoadWeatherColorsClick(Sender: TObject);
   var
     dlg: TOpenDialog;
-    slColors, sl, slRGB: TStringList;
+    slColors, sl: TStringList;
     fname, line: string;
     i, l: integer;
-    //c: LongWord;
     e: IInterface;
 begin
   if not CheckEditable(Weather) then
@@ -242,37 +220,101 @@ begin
 
     if dlg.Execute then
       fname := dlg.FileName;
+
+      //MessageDlg(Format('fname is %s', [fname]), mtInformation, [mbOk], 0);
+
+      // slColors contains the CSV file contents
+      slColors := TStringList.Create;
+      slColors.LoadFromFile(fname);
+
+      // sl contains the delimitted strings (fields)
+      sl := TStringList.Create;
+      sl.Delimiter := ',';
+      sl.StrictDelimiter := True;
+
+      // Iterate over lines
+      for l := 0 to Pred(slColors.Count) do begin
+        line := slColors[l];
+
+        sl.DelimitedText := line;
+        //MessageDlg(Format('sl count is %s', [IntToStr(sl.Count)]), mtInformation, [mbOk], 0);
+
+        // Iterate over delimitted strings (fields)
+        //for i := 0 to Pred(sl.Count) do begin
+
+        //end;
+
+      end;
+
+      ColorEditorWriteColorLE(CountTimes, CountTimes + Pred(CountWeatherColors), sl);
+
     //else
       //Exit;
   finally
     dlg.Free;
+    sl.Free;
+    slColors.Free;
   end;
+end;
 
-  // slColors contains the CSV file contents
-  slColors := TStringList.Create;
-  slColors.LoadFromFile(fname);
+// LE
+//============================================================================
+// read CSV for ambient lighting colors
+procedure btnLoadAmbientLightingColorsClick(Sender: TObject);
+  var
+    dlg: TOpenDialog;
+    slColors, sl: TStringList;
+    fname, line: string;
+    i, l: integer;
+    e: IInterface;
+begin
+  if not CheckEditable(Weather) then
+    Exit;
 
-  // sl contains the delimitted strings (fields)
-  sl := TStringList.Create;
-  sl.Delimiter := sDelimiterChar;
-  sl.StrictDelimiter := True;
+  // Load file
+  dlg := TOpenDialog.Create(nil);
+  try
+    dlg.Filter := 'CSV files (*.csv)|*.csv';
+    dlg.InitialDir := ';';//wbScriptsPath;
+    dlg.FileName := EditorID(e) + '.csv';
 
-  // Iterate over lines
-  //for l := 0 to Pred(slColors.Count) do begin
-    //line := slColors[l];
+    if dlg.Execute then
+      fname := dlg.FileName;
 
-    //n := 0;
-    // Iterate over delimitted strings (fields)
-    MessageDlg(Format('sl count is %s', [IntToStr(sl.Count)]), mtInformation, [mbOk], 0);
-    //for i := 0 to Pred(sl.Count) do begin
-      //slRGB[i] := sl[i];
-    //end;
+      //MessageDlg(Format('fname is %s', [fname]), mtInformation, [mbOk], 0);
 
-    ColorEditorWriteColorLE(CountTimes, CountTimes + Pred(CountWeatherColors), sl);
+      // slColors contains the CSV file contents
+      slColors := TStringList.Create;
+      slColors.LoadFromFile(fname);
 
-    //sl.Free;
-    //slColors.Free;
-  //end;
+      // sl contains the delimitted strings (fields)
+      sl := TStringList.Create;
+      sl.Delimiter := ',';
+      sl.StrictDelimiter := True;
+
+      // Iterate over lines
+      for l := 0 to Pred(slColors.Count) do begin
+        line := slColors[l];
+
+        sl.DelimitedText := line;
+        //MessageDlg(Format('sl count is %s', [IntToStr(sl.Count)]), mtInformation, [mbOk], 0);
+
+        // Iterate over delimitted strings (fields)
+        //for i := 0 to Pred(sl.Count) do begin
+
+        //end;
+
+      end;
+
+      ColorEditorWriteColorLE(CountTimes + CountWeatherColors, CountTimes + CountWeatherColors + Pred(CountLightingColors), sl);
+
+    //else
+      //Exit;
+  finally
+    dlg.Free;
+    sl.Free;
+    slColors.Free;
+  end;
 end;
 
 //============================================================================
@@ -791,9 +833,9 @@ begin
     btnLoadWeatherColors := TButton.Create(frm);
     btnLoadWeatherColors.Parent := sbx;
     btnLoadWeatherColors.Width := 100;
-    btnLoadWeatherColors.Left := 240 + CountTimes*iColorEditorWidth - btnLoadWeatherColors.Width;
+    btnLoadWeatherColors.Left := 0 + CountTimes*iColorEditorWidth - btnLoadWeatherColors.Width;
     btnLoadWeatherColors.Top := 40 + Succ(i)*iColorEditorHeight;
-    btnLoadWeatherColors.Caption := 'Load CSV';
+    btnLoadWeatherColors.Caption := 'Load Weather CSV';
     //btnLoadWeatherColors.OnClick := btnLoadWeatherColorsClick;
 
     btnApplyWeatherColors := TButton.Create(frm);
@@ -837,6 +879,15 @@ begin
           Inc(CountLightingColors);
         end;
       end;
+
+      // LE
+      btnLoadAmbientLightingColors := TButton.Create(frm);
+      btnLoadAmbientLightingColors.Parent := sbx;
+      btnLoadAmbientLightingColors.Width := 100;
+      btnLoadAmbientLightingColors.Left := 0 + CountTimes*iColorEditorWidth - btnLoadAmbientLightingColors.Width;
+      btnLoadAmbientLightingColors.Top := 40 + Succ(j)*iColorEditorHeight;
+      btnLoadAmbientLightingColors.Caption := 'Load Lighting CSV';
+      //btnLoadAmbientLightingColors.OnClick := btnLoadAmbientLightingColorsClick;
 
       btnApplyLightingColors := TButton.Create(frm);
       btnApplyLightingColors.Parent := sbx;

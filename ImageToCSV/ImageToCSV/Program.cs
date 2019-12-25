@@ -29,32 +29,75 @@ namespace ImageToCSV
                     GraphicsUnit units = GraphicsUnit.Pixel;
                     RectangleF rect = bmp.GetBounds(ref units);
 
-                    var xColorCount = (int)Math.Floor(rect.Width / 170);
-                    var yColorCount = (int)Math.Floor(rect.Height / 50);
+                    // *NOTE*
+                    // For weather colors, we write each column in a row first.
+                    // For ambient lighting colors, we write each row in a column first.
+                    // This is because loading the CSV colors into the ambient lighting color
+                    // panel in xEdit happens by column but weather colors is by row.
 
-                    // For each row...
-                    for (var yColor = 0; yColor < yColorCount; yColor++)
+                    // If image is for weather colors...
+                    if (rect.Height == 950) {
+                        var xColorCount = (int)Math.Floor(rect.Width / 170);
+                        var yColorCount = (int)Math.Floor(rect.Height / 50);
+
+                        // For each row...
+                        for (var yColor = 0; yColor < yColorCount; yColor++)
+                        {
+                            // For each column...
+                            for (var xColor = 0; xColor < xColorCount; xColor++)
+                            {
+                                // Each color is 50 x 170
+                                Color color = bmp.GetPixel(xColor * 171, yColor * 51);
+                                int blue = color.B;
+                                int green = color.G;
+                                int red = color.R;
+
+                                // Append to CSV
+                                csv += blue.ToString() + "," + green.ToString() + "," + red.ToString() + ",";
+                            }
+                        }
+
+                        // Remove trailing comma from last color
+                        csv = csv.TrimEnd(',');
+
+                        // Write to CSV file
+                        File.WriteAllText(fileName.Split('\\')[1].Split('.')[0] + ".csv", csv);
+                        writeCount += 1;
+                    }
+                    // If image is for ambient lighting colors...
+                    else if (rect.Height == 300)
                     {
+                        var xColorCount = (int)Math.Floor(rect.Width / 170);
+                        var yColorCount = (int)Math.Floor(rect.Height / 50);
+
                         // For each column...
                         for (var xColor = 0; xColor < xColorCount; xColor++)
                         {
-                            // Each color is 50 x 170
-                            Color color = bmp.GetPixel(xColor * 171, yColor * 51);
-                            int blue = color.B;
-                            int green = color.G;
-                            int red = color.R;
+                            // For each row...
+                            for (var yColor = 0; yColor < yColorCount; yColor++)
+                            {
+                                // Each color is 50 x 170
+                                Color color = bmp.GetPixel(xColor * 171, yColor * 51);
+                                int blue = color.B;
+                                int green = color.G;
+                                int red = color.R;
 
-                            // Append to CSV
-                            csv += red.ToString() + "," + green.ToString() + "," + blue.ToString() + ",";
+                                // Append to CSV
+                                csv += blue.ToString() + "," + green.ToString() + "," + red.ToString() + ",";
+                            }
                         }
+
+                        // Remove trailing comma from last color
+                        csv = csv.TrimEnd(',');
+
+                        // Write to CSV file
+                        File.WriteAllText(fileName.Split('\\')[1].Split('.')[0] + ".csv", csv);
+                        writeCount += 1;
                     }
-
-                    // Remove trailing comma from last color
-                    csv = csv.TrimEnd(',');
-
-                    // Write to CSV file
-                    File.WriteAllText(fileName.Split('\\')[1].Split('.')[0] + ".csv", csv);
-                    writeCount += 1;
+                    else
+                    {
+                        Console.WriteLine("Invalid image dimension(s).");
+                    }
                 }
 
                 if (writeCount > 0) {
