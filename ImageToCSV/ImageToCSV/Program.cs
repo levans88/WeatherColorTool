@@ -13,11 +13,11 @@ namespace ImageToCSV
         static void Main(string[] args)
         {
             int writeCount = 0;
-            string[] filePaths = Directory.GetFiles(@".\", "*.png");
+            string[] filePaths = Directory.GetFiles(@".\", "*.bmp");
 
             if (filePaths.Length == 0)
             {
-                Console.WriteLine("No PNG files found. Place PNG files for conversion in the same folder as this application and try again.");
+                Console.WriteLine("No BMP files found. Place BMP files for conversion in the same folder as this application and try again.");
             }
             else
             {
@@ -94,6 +94,36 @@ namespace ImageToCSV
                         File.WriteAllText(fileName.Split('\\')[1].Split('.')[0] + ".csv", csv);
                         writeCount += 1;
                     }
+                    // If image is cloud layer colors...
+                    else if (rect.Height == 1400)
+                    {
+                        var xColorCount = (int)Math.Floor(rect.Width / 170);
+                        var yColorCount = (int)Math.Floor(rect.Height / 50);
+
+                        // For each row...
+                        for (var yColor = 0; yColor < yColorCount; yColor++)
+                        {
+                            // For each column...
+                            for (var xColor = 0; xColor < xColorCount; xColor++)
+                            {
+                                // Each color is 50 x 170
+                                Color color = bmp.GetPixel(xColor * 171, yColor * 51);
+                                int blue = color.B;
+                                int green = color.G;
+                                int red = color.R;
+
+                                // Append to CSV
+                                csv += blue.ToString() + "," + green.ToString() + "," + red.ToString() + ",";
+                            }
+                        }
+
+                        // Remove trailing comma from last color
+                        csv = csv.TrimEnd(',');
+
+                        // Write to CSV file
+                        File.WriteAllText(fileName.Split('\\')[1].Split('.')[0] + ".csv", csv);
+                        writeCount += 1;
+                    }
                     else
                     {
                         Console.WriteLine("Invalid image dimension(s).");
@@ -101,7 +131,7 @@ namespace ImageToCSV
                 }
 
                 if (writeCount > 0) {
-                    Console.WriteLine("Converted " + writeCount + " PNGs to CSV.");
+                    Console.WriteLine("Converted " + writeCount + " BMPs to CSV.");
                 }
                 else
                 {
