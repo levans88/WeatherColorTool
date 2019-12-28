@@ -95,7 +95,7 @@ namespace ImageToCSV
                         writeCount += 1;
                     }
                     // If image is cloud layer colors...
-                    else if (rect.Height == 1400)
+                    else if (rect.Height == 1450)
                     {
                         var xColorCount = (int)Math.Floor(rect.Width / 170);
                         var yColorCount = (int)Math.Floor(rect.Height / 50);
