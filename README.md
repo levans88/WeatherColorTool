@@ -1,22 +1,40 @@
 # WeatherColorTool
 Fallout 4 Weather Color Tool
 
-Work in progress... don't try to run this script right now.
+<b>Features</b>
+- Edit weathers for Fallout 4 as BMPs in Paint.NET or your favorite image editor (adjust hue/saturation, whatever)
+- Convert weather images from BMP to CSV using ImageToCSV.exe
+- Import weather CSVs into xEdit (skips disabled cloud layers as it should)
+- Supports cloud layers, weather colors, and ambient light colors as separate images (all cloud layers as single image)
 
-The intention is to create a script that can import a file containing RGB data for weather colors into xEdit.
+<b>Repository Description</b>
+This repository contains a Delphi project (\WeatherColorTool), a C# project (\ImageToCSV), and an xEdit script (\Weather Editor.pas).
 
-I want to change the collective hue of the colors involved in a rad storm in Paint.net instead of hand editing 700+ fields just to test a palette/idea.
+The Delphi project was used to modify xEdit's "Weather Editor.pas" script in RAD Studio with syntax highlighting and intellisense. I had to comment some things out for the IDE to be useful and let me build, so it is called "WeatherColorTool.pas" when being used in Delphi RAD Studio. The finalized version is a modified replacement for xEdit's "Weather Editor.pas" script and is in the root of this repository. For more on setting up a dev environment for Delphi/xEdit scripts, see this link:  https://tes5edit.github.io/docs/11-Scripting-Functions.html#s_11-2
 
-The plan is to use the existing "Weather Editor.pas" script in xEdit (Ctrl + W) or its code to export screenshots of the colors for a specific weather, edit the image colors in whatever way, then use a modified version of the same weather script to load the new colors from a file (ex: image, array in text file, etc.)
+The C# project is for converting bitmaps to CSV files for import by the "Weather Editor.pas" script.
 
-The three groups of colors, their screenshot dimensions, and their fields as named in "Weather Editor.pas" are listed below:
+<b>Notice</b>
+The modified version of this script retains all original functionality for other games, but the new functionality will only execute and work for Fallout 4 at this time.
 
-1) Clouds, 1360 x 50, "Layer 0" through "Layer 28". Some layers are enabled (checked) but many might not be. <b>Rad storm cloud layers appear to be all the same color. This experiment does not need to handle cloud layers at this time</b>.
+<b>Usage Instructions</b>
 
-2) Weather Colors, 1360 x 950
-- X-Axis: Sunrise, Day, Sunset, Night, Unknown, Unknown, Unknown, Unknown
-- Y-Axis: Sky-Upper, Fog Near, Unknown, Ambient, Sunlight, Sun, Stars, Sky-Lower, Horizon, Effect Lighting, Cloud LOD Diffuse, Cloud LOD Ambient, Fog Far, Sky Statics, Water Multiplier, Sun Glare, Moon Glare, Unknown1, Unknown2
+Acquiring Images
+1) Backup your original "Weather Editor.pas" xEdit script, and drop this repo's version into your xEdit "Edit Scripts" folder.
+2) Load FO4Edit including whatever weather plug-in(s) containe the weather records you want to modify.
+3) Click on the weather record you want to recolor, press "Ctrl + w" to run the Weather Editor.
+4) Take a screen shot of the section of colors you want to edit (Weather Colors or Directional Ambient Light Colors). For Cloud Layer Colors you'll have to take one screen shot per layer and assemble into a single BMP for now. Trim screenshots and/or assemble them into your BMP files just like the sample images using the same dimensions.
+5) Edit your weather images using Paint.NET or your favorite image editing tool. Avoid dithering and anti-aliasing at save and on tool usage. Save your files as BMP.
 
-3) Directional Ambient Lighting Colors, 1360 x 300
-- X-Axis: Sunrise, Day, Sunset, Night, Unknown, Unknown, Unknown, Unknown
-- Y-Axis: Color #0 (X+), Color #1 (X-), Color #2 (Y+), Color #3 (Y-), Color #4 (Z+), Color #5 (Z-)
+Importing Images
+1) Place your images in the same folder as ImageToCSV.exe and run the program. A CSV for each image will be created.
+2) Return to or re-open FO4Edit including whatever weather plug-in(s) contain the weather records you want to modify.
+3) Right-click on the weather record(s) you want to modify and "Copy as Override" into a new plug-in (name it whatever you want).
+4) Go to the copy of the weather you just made, click on it, and press "Ctrl + w" to run the Weather Editor.
+5) Click on the "Tools" tab.
+6) Press the load button associated with the type of CSV you would like to import: "Load Weather CSV", "Load Lighting CSV", or "Load Clouds CSV". You will get a message prompting you to re-run the script to see the changes, but you can load all three before you do that if you want.
+7) Close the Weather Editor and re-run it (Ctrl + w) to verify the changes were made.
+8) Take note of your weather's ID, exit, and save your plug-in. Install your plug-in as you normally would and take note of its load order.
+9) Run your game, open the console, and test your changes with "fw XXXXXXXX" (where the XXXXXXXX is your weather's ID)
+9) Save your plug
+
