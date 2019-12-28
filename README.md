@@ -24,7 +24,7 @@ The modified version of this script retains all original functionality for other
 
 Acquiring Images
 1) Backup your original "Weather Editor.pas" xEdit script, and drop this repo's version into your xEdit "Edit Scripts" folder.
-2) Load FO4Edit including whatever weather plug-in(s) containe the weather records you want to modify.
+2) Load FO4Edit including whatever weather plug-in(s) contain the weather records you want to modify.
 3) Click on the weather record you want to recolor, press "Ctrl + w" to run the Weather Editor.
 4) Take a screen shot of the section of colors you want to edit (Weather Colors or Directional Ambient Light Colors). For Cloud Layer Colors you'll have to take one screen shot per layer and assemble into a single BMP for now. Trim screenshots and/or assemble them into your BMP files just like the sample images using the same dimensions.
 5) Edit your weather images using Paint.NET or your favorite image editing tool. Avoid dithering and anti-aliasing at save and on tool usage. Save your files as BMP.
