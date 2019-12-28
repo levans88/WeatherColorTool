@@ -1,13 +1,15 @@
 # WeatherColorTool
-Fallout 4 Weather Color Tool
+Fallout 4 Weather Color Tool (DIY Radstorm Colorizer - Edit Weathers as Bitmap Images)
 
 <b>Features</b>
+
 - Edit weathers for Fallout 4 as BMPs in Paint.NET or your favorite image editor (adjust hue/saturation, whatever)
 - Convert weather images from BMP to CSV using ImageToCSV.exe
 - Import weather CSVs into xEdit (skips disabled cloud layers as it should)
 - Supports cloud layers, weather colors, and ambient light colors as separate images (all cloud layers as single image)
 
 <b>Repository Description</b>
+
 This repository contains a Delphi project (\WeatherColorTool), a C# project (\ImageToCSV), and an xEdit script (\Weather Editor.pas).
 
 The Delphi project was used to modify xEdit's "Weather Editor.pas" script in RAD Studio with syntax highlighting and intellisense. I had to comment some things out for the IDE to be useful and let me build, so it is called "WeatherColorTool.pas" when being used in Delphi RAD Studio. The finalized version is a modified replacement for xEdit's "Weather Editor.pas" script and is in the root of this repository. For more on setting up a dev environment for Delphi/xEdit scripts, see this link:  https://tes5edit.github.io/docs/11-Scripting-Functions.html#s_11-2
@@ -15,6 +17,7 @@ The Delphi project was used to modify xEdit's "Weather Editor.pas" script in RAD
 The C# project is for converting bitmaps to CSV files for import by the "Weather Editor.pas" script.
 
 <b>Notice</b>
+
 The modified version of this script retains all original functionality for other games, but the new functionality will only execute and work for Fallout 4 at this time.
 
 <b>Usage Instructions</b>
