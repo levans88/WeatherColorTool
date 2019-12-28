@@ -38,6 +38,4 @@ Importing Images
 6) Press the load button associated with the type of CSV you would like to import: "Load Weather CSV", "Load Lighting CSV", or "Load Clouds CSV". You will get a message prompting you to re-run the script to see the changes, but you can load all three before you do that if you want.
 7) Close the Weather Editor and re-run it (Ctrl + w) to verify the changes were made.
 8) Take note of your weather's ID, exit, and save your plug-in. Install your plug-in as you normally would and take note of its load order.
-9) Run your game, open the console, and test your changes with "fw XXXXXXXX" (where the XXXXXXXX is your weather's ID)
-9) Save your plug
-
+9) Run your game, open the console, and test your changes with "fw XXXXXXXX" (where the XXXXXXXX is your weather's ID).
