@@ -1,0 +1,6 @@
+C:\Repos\WeatherColorTool\ImageToCSV\ImageToCSV\bin\Release\ImageToCSV.exe
+C:\Repos\WeatherColorTool\ImageToCSV\ImageToCSV\bin\Release\ImageToCSV.pdb
+C:\Repos\WeatherColorTool\ImageToCSV\ImageToCSV\obj\Release\ImageToCSV.csprojAssemblyReference.cache
+C:\Repos\WeatherColorTool\ImageToCSV\ImageToCSV\obj\Release\ImageToCSV.csproj.CoreCompileInputs.cache
+C:\Repos\WeatherColorTool\ImageToCSV\ImageToCSV\obj\Release\ImageToCSV.exe
+C:\Repos\WeatherColorTool\ImageToCSV\ImageToCSV\obj\Release\ImageToCSV.pdb
