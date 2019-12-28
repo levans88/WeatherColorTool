@@ -15,8 +15,7 @@ This repository contains a Delphi project (\WeatherColorTool), a C# project (\Im
 The Delphi project was used to modify xEdit's "Weather Editor.pas" script in RAD Studio with syntax highlighting and intellisense. I had to comment some things out for the IDE to be useful and let me build, so it is called "WeatherColorTool.pas" when being used in Delphi RAD Studio. The finalized version is a modified replacement for xEdit's "Weather Editor.pas" script and is in the root of this repository. For more on setting up a dev environment for Delphi/xEdit scripts, see this link:  https://tes5edit.github.io/docs/11-Scripting-Functions.html#s_11-2
 
 The C# project is for converting bitmaps to CSV files for import by the "Weather Editor.pas" script.
-</br>
-</br>
+
 <b>Notice</b>
 
 The modified version of this script retains all original functionality for other games, but the new functionality will only execute and work for Fallout 4 at this time.
