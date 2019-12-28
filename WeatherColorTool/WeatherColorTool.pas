@@ -1,5 +1,3 @@
-
-
 unit WeatherColorTool;
 
 interface
@@ -14,9 +12,6 @@ const
   sCloudTexturesLocation = 'textures\sky\';
   iColorEditorWidth = 170;
   iColorEditorHeight = 50;
-
-  // LE
-  //sDelimiterChar = ';';
 
   // LE overrides to get RAD studio to shutup
   wbGameMode = 'gmFO4';
@@ -40,7 +35,7 @@ var
   btnShowCloudTexture, btnApplyCloud, btnApplyWeatherColors, btnApplyLightingColors: TButton;
 
   // LE
-  btnLoadWeatherColors, btnLoadAmbientLightingColors: TButton;
+  btnLoadWeatherColors, btnLoadAmbientLightingColors, btnLoadCloudLayerColors: TButton;
 
   btnCopyClouds, btnCopyWeatherColors, btnCopyLightingColors: TButton;
   edCloudXSpeed, edCloudYSpeed, edCloudAlpha1, edCloudAlpha2, edCloudAlpha3, edCloudAlpha4, edCloudAlpha5, edCloudAlpha6, edCloudAlpha7, edCloudAlpha8: TLabeledEdit;
@@ -126,19 +121,6 @@ begin
   end;
 end;
 
-// LE
-//============================================================================
-//
-function StupidTest(): integer;
-var
-  stupidNumber: integer;
-begin
-  stupidNumber := stupidNumber or 5;
-  stupidNumber := stupidNumber or 10;
-
-  MessageDlg(Format('stupidTestString is  %s', [IntToStr(stupidNumber)]), mtInformation, [mbOk], 0);
-end;
-
 //============================================================================
 // convert a color element in plugin to TColor
 function ColorElementToColor(elColor: IInterface): LongWord;
@@ -164,20 +146,12 @@ end;
 // LE
 //============================================================================
 // save colors to weather record for color editors with index idxFrom..idxTo
-procedure ColorEditorWriteColorLE(idxFrom, idxTo: integer; sl: TStringList);
+procedure WriteCSVColorsWeatherAndLighting(idxFrom, idxTo: integer; sl: TStringList);
 var
-  i,a: integer;
+  i, a: integer;
   c: LongWord;
   e: IInterface;
 begin
-  a := 0;
-
-  //MessageDlg(Format('sanity %s', ['test']), mtInformation, [mbOk], 0);
-  //MessageDlg(Format('sl count is %s', [IntToStr(sl.Count)]), mtInformation, [mbOk], 0);
-
-  //MessageDlg(Format('sl1 is %s', [IntToStr(sl[a])]), mtInformation, [mbOk], 0);
-  //MessageDlg(Format('sl2 is %s', [IntToStr(sl[a + 1])]), mtInformation, [mbOk], 0);
-  //MessageDlg(Format('sl3 is %s', [IntToStr(sl[a + 2])]), mtInformation, [mbOk], 0);
 
   for i := idxFrom to idxTo do begin
     e := ObjectToElement(lstCEDElement[i]);
@@ -193,8 +167,33 @@ begin
 
     a := a + 3;
   end;
+end;
 
-  //sl.Free;
+// LE
+//============================================================================
+// save colors to cloud layers with index idxFrom..idxTo
+procedure WriteCSVColorsCloudLayers(a, layer: integer; sl: TStringList);
+var
+  i: integer;
+  c: LongWord;
+  elcolors, e: IInterface;
+begin
+  elcolors := ElementByName(ElementByIndex(ElementByPath(Weather, 'PNAM'), layer), 'Colors');
+
+  for i := 0 to Pred(CountTimes) do begin
+    e := ElementByIndex(elcolors, i);
+
+    c := 0;
+    c := c or sl[a] shl 16;
+    c := c or sl[a + 1] shl 8;
+    c := c or sl[a + 2];
+
+    SetElementNativeValues(e, 'Blue', (c shr 16) and $FF);
+    SetElementNativeValues(e, 'Green', (c shr 8) and $FF);
+    SetElementNativeValues(e, 'Red', c and $FF);
+
+    a := a + 3;
+  end;
 end;
 
 // LE
@@ -215,13 +214,11 @@ begin
   dlg := TOpenDialog.Create(nil);
   try
     dlg.Filter := 'CSV files (*.csv)|*.csv';
-    dlg.InitialDir := ';';//wbScriptsPath;
+    dlg.InitialDir := ';';
     dlg.FileName := EditorID(e) + '.csv';
 
     if dlg.Execute then
       fname := dlg.FileName;
-
-      //MessageDlg(Format('fname is %s', [fname]), mtInformation, [mbOk], 0);
 
       // slColors contains the CSV file contents
       slColors := TStringList.Create;
@@ -235,21 +232,15 @@ begin
       // Iterate over lines
       for l := 0 to Pred(slColors.Count) do begin
         line := slColors[l];
-
         sl.DelimitedText := line;
-        //MessageDlg(Format('sl count is %s', [IntToStr(sl.Count)]), mtInformation, [mbOk], 0);
 
         // Iterate over delimitted strings (fields)
         //for i := 0 to Pred(sl.Count) do begin
-
         //end;
-
       end;
 
-      ColorEditorWriteColorLE(CountTimes, CountTimes + Pred(CountWeatherColors), sl);
-
-    //else
-      //Exit;
+      WriteCSVColorsWeatherAndLighting(CountTimes, CountTimes + Pred(CountWeatherColors), sl);
+      MessageDlg('Please restart Weather Editor to see changes', mtInformation, [mbOk], 0);
   finally
     dlg.Free;
     sl.Free;
@@ -275,13 +266,11 @@ begin
   dlg := TOpenDialog.Create(nil);
   try
     dlg.Filter := 'CSV files (*.csv)|*.csv';
-    dlg.InitialDir := ';';//wbScriptsPath;
+    dlg.InitialDir := ';';
     dlg.FileName := EditorID(e) + '.csv';
 
     if dlg.Execute then
       fname := dlg.FileName;
-
-      //MessageDlg(Format('fname is %s', [fname]), mtInformation, [mbOk], 0);
 
       // slColors contains the CSV file contents
       slColors := TStringList.Create;
@@ -295,25 +284,77 @@ begin
       // Iterate over lines
       for l := 0 to Pred(slColors.Count) do begin
         line := slColors[l];
-
         sl.DelimitedText := line;
-        //MessageDlg(Format('sl count is %s', [IntToStr(sl.Count)]), mtInformation, [mbOk], 0);
+        // Iterate over delimitted strings (fields)
+        //for i := 0 to Pred(sl.Count) do begin
+        //end;
+      end;
+
+      WriteCSVColorsWeatherAndLighting(CountTimes + CountWeatherColors, CountTimes + CountWeatherColors + Pred(CountLightingColors), sl);
+      MessageDlg('Please restart Weather Editor to see changes', mtInformation, [mbOk], 0);
+  finally
+    dlg.Free;
+    sl.Free;
+    slColors.Free;
+  end;
+end;
+
+// LE
+//============================================================================
+// read CSV for cloud colors
+procedure btnLoadCloudLayerColorsClick(Sender: TObject);
+  var
+    dlg: TOpenDialog;
+    slColors, sl: TStringList;
+    fname, line: string;
+    l, layer, a: integer;
+    e: IInterface;
+begin
+  if not CheckEditable(Weather) then
+    Exit;
+
+  // Load file
+  dlg := TOpenDialog.Create(nil);
+  try
+    dlg.Filter := 'CSV files (*.csv)|*.csv';
+    dlg.InitialDir := ';';
+    dlg.FileName := EditorID(e) + '.csv';
+
+    if dlg.Execute then
+      fname := dlg.FileName;
+
+      // slColors contains the CSV file contents
+      slColors := TStringList.Create;
+      slColors.LoadFromFile(fname);
+
+      // sl contains the delimitted strings (fields)
+      sl := TStringList.Create;
+      sl.Delimiter := ',';
+      sl.StrictDelimiter := True;
+
+      // Iterate over lines
+      for l := 0 to Pred(slColors.Count) do begin
+        line := slColors[l];
+        sl.DelimitedText := line;
 
         // Iterate over delimitted strings (fields)
         //for i := 0 to Pred(sl.Count) do begin
-          //MessageDlg(Format('sl is %s', [IntToStr(sl[i])]), mtInformation, [mbOk], 0);
         //end;
-
       end;
 
-      //MessageDlg(Format('CountTimes %s', [IntToStr(CountTimes)]), mtInformation, [mbOk], 0);
-      //MessageDlg(Format('CountWeatherColors %s', [IntToStr(CountWeatherColors)]), mtInformation, [mbOk], 0);
-      //MessageDlg(Format('CountLightingColors %s', [IntToStr(CountLightingColors)]), mtInformation, [mbOk], 0);
+      layer := lbCloudLayers.ItemIndex;
+      a := 0;
+      //k := 0;
 
-      ColorEditorWriteColorLE(CountTimes + CountWeatherColors, CountTimes + CountWeatherColors + Pred(CountLightingColors), sl);
+      for layer := 0 to Pred(CountCloudLayers) do begin
+        if lbCloudLayers.Checked[layer] then
+          WriteCSVColorsCloudLayers(a, layer, sl);
 
-    //else
-      //Exit;
+        // Update position for reading from CSV
+        a := a + (3 * CountTimes);
+      end;
+
+      MessageDlg('Please restart Weather Editor to see changes', mtInformation, [mbOk], 0);
   finally
     dlg.Free;
     sl.Free;
@@ -833,15 +874,6 @@ begin
       end;
     end;
 
-    // LE
-    btnLoadWeatherColors := TButton.Create(frm);
-    btnLoadWeatherColors.Parent := sbx;
-    btnLoadWeatherColors.Width := 100;
-    btnLoadWeatherColors.Left := 0 + CountTimes*iColorEditorWidth - btnLoadWeatherColors.Width;
-    btnLoadWeatherColors.Top := 40 + Succ(i)*iColorEditorHeight;
-    btnLoadWeatherColors.Caption := 'Load Weather CSV';
-    //btnLoadWeatherColors.OnClick := btnLoadWeatherColorsClick;
-
     btnApplyWeatherColors := TButton.Create(frm);
     btnApplyWeatherColors.Parent := sbx;
     btnApplyWeatherColors.Width := 100;
@@ -884,15 +916,6 @@ begin
         end;
       end;
 
-      // LE
-      btnLoadAmbientLightingColors := TButton.Create(frm);
-      btnLoadAmbientLightingColors.Parent := sbx;
-      btnLoadAmbientLightingColors.Width := 100;
-      btnLoadAmbientLightingColors.Left := 0 + CountTimes*iColorEditorWidth - btnLoadAmbientLightingColors.Width;
-      btnLoadAmbientLightingColors.Top := 40 + Succ(j)*iColorEditorHeight;
-      btnLoadAmbientLightingColors.Caption := 'Load Lighting CSV';
-      //btnLoadAmbientLightingColors.OnClick := btnLoadAmbientLightingColorsClick;
-
       btnApplyLightingColors := TButton.Create(frm);
       btnApplyLightingColors.Parent := sbx;
       btnApplyLightingColors.Width := 100;
@@ -926,7 +949,33 @@ begin
       btnCopyLightingColors.Caption := 'Copy lighting colors from';
       //btnCopyLightingColors.OnClick := btnCopyLightingColorsClick;
     end;
-    
+
+    // LE
+    if wbGameMode = gmFO4 then begin
+      btnLoadWeatherColors := TButton.Create(frm);
+      btnLoadWeatherColors.Parent := tsTools;
+      btnLoadWeatherColors.Left := 16; btnLoadWeatherColors.Top := 106; btnLoadWeatherColors.Width := 100;
+      btnLoadWeatherColors.Caption := 'Load Weather CSV';
+      //btnLoadWeatherColors.OnClick := btnLoadWeatherColorsClick;
+    end;
+
+    // LE
+    if wbGameMode = gmFO4 then begin
+      btnLoadAmbientLightingColors := TButton.Create(frm);
+      btnLoadAmbientLightingColors.Parent := tsTools;
+      btnLoadAmbientLightingColors.Left := 16; btnLoadAmbientLightingColors.Top := 136; btnLoadAmbientLightingColors.Width := 100;
+      btnLoadAmbientLightingColors.Caption := 'Load Lighting CSV';
+      //btnLoadAmbientLightingColors.OnClick := btnLoadAmbientLightingColorsClick;
+    end;
+
+    // LE
+    if wbGameMode = gmFO4 then begin
+      btnLoadCloudLayerColors := TButton.Create(frm);
+      btnLoadCloudLayerColors.Parent := tsTools;
+      btnLoadCloudLayerColors.Left := 16; btnLoadCloudLayerColors.Top := 166; btnLoadCloudLayerColors.Width := 100;
+      btnLoadCloudLayerColors.Caption := 'Load Clouds CSV';
+      //btnLoadCloudLayerColors.OnClick := btnLoadCloudLayerColorsClick;
+    end;
 
     frm.ShowModal;
   finally
