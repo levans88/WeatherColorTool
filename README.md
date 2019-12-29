@@ -5,8 +5,8 @@ Fallout 4 Weather Color Tool (DIY Radstorm Colorizer - Edit Weathers as Bitmap I
 
 - Edit weathers for Fallout 4 as BMPs in Paint.NET or your favorite image editor (adjust hue/saturation, whatever)
 - Convert weather images from BMP to CSV using ImageToCSV.exe
-- Import weather CSVs into xEdit (skips disabled cloud layers as it should)
-- Supports cloud layers, weather colors, and ambient light colors as separate images (all cloud layers as single image)
+- Import weather CSVs into xEdit using a modified version of Weather Editor
+- Supports cloud layers (skips disabled cloud layers as it should), weather colors, and ambient light colors as separate images (all cloud layers as single image)
 
 <b>Repository Description</b>
 
